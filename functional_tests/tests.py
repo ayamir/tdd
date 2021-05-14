@@ -1,5 +1,5 @@
 from django.test import LiveServerTestCase
-from msedge.selenium_tools import EdgeOptions, Edge
+from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import WebDriverException
 import unittest
@@ -9,13 +9,7 @@ MAX_WAIT = 10
 
 class NewVisitorTest(LiveServerTestCase):  # (1)
     def setUp(self):  # (2)
-        options = EdgeOptions()
-        options.use_chromium = True
-        options.binary_location = r'/usr/bin/microsoft-edge-dev'
-        options.set_capability("platform", "LINUX")  # (2)
-
-        webdriver_path = r'/home/ayamir/.local/bin/msedgedriver'
-        self.browser = Edge(options=options, executable_path=webdriver_path)
+        self.browser = webdriver.Chrome()
 
     def tearDown(self):  # (3)
         self.browser.quit()
@@ -73,16 +67,11 @@ class NewVisitorTest(LiveServerTestCase):  # (1)
         self.wait_for_row_in_list_table('1: Buy peacock feathers')
 
         edith_list_url = self.browser.current_url
-        self.assertRegex(edith_list_url, 'list/.+')
+        self.assertRegex(edith_list_url, '/lists/.+')
 
         self.browser.quit()
-        options = EdgeOptions()
-        options.use_chromium = True
-        options.binary_location = r'/usr/bin/microsoft-edge-dev'
-        options.set_capability("platform", "LINUX")  # (2)
-        webdriver_path = r'/home/ayamir/.local/bin/msedgedriver'
-        self.browser = Edge(options=options, executable_path=webdriver_path)
 
+        self.browser = webdriver.Chrome()
         self.browser.get(self.live_server_url)
         page_text = self.browser.find_element_by_tag_name('body').text
         self.assertNotIn('Buy peacock feathers', page_text)
@@ -93,7 +82,7 @@ class NewVisitorTest(LiveServerTestCase):  # (1)
         self.wait_for_row_in_list_table('1: Buy milk')
 
         francis_list_url = self.browser.current_url
-        self.assertRegex(francis_list_url, '/list/.+')
+        self.assertRegex(francis_list_url, '/lists/.+')
         self.assertNotEqual(francis_list_url, edith_list_url)
 
         page_text = self.browser.find_element_by_tag_name('body').text
