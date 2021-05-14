@@ -1,10 +1,11 @@
+from django.test import LiveServerTestCase
 from msedge.selenium_tools import EdgeOptions, Edge
 from selenium.webdriver.common.keys import Keys
 import unittest
 import time
 
 
-class NewVisitorTest(unittest.TestCase):  # (1)
+class NewVisitorTest(LiveServerTestCase):  # (1)
     def setUp(self):  # (2)
         options = EdgeOptions()
         options.use_chromium = True
@@ -24,7 +25,7 @@ class NewVisitorTest(unittest.TestCase):  # (1)
         self.assertIn(row_text, [row_text for row in rows])
 
     def test_can_start_a_list_and_retrieve_it_later(self):
-        self.browser.get('http://localhost:8000')  # (3)
+        self.browser.get(self.live_server_url)  # (3)
 
         # she is invited to enter a to-do item straight away
         inputbox = self.browser.find_element_by_id('id_new_item')
