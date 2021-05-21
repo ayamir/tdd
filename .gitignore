@@ -2,4 +2,5 @@ db.sqlite3
 tdd/__pycache__
 tddapp/__pycache__
 tddapp/migrations/__pycache__
+functional_tests/__pycache__
 .vim/
