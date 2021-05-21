@@ -17,11 +17,10 @@ class NewVisitorTest(unittest.TestCase):  # (1)
     def tearDown(self):  # (3)
         self.browser.quit()
 
-
     def check_for_row_in_list_table(self, row_text):
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
-        self.assertIn(row_text, [row_text for row in rows])
+        self.assertIn(row_text, [row.text for row in rows])
 
     def test_can_start_a_list_and_retrieve_it_later(self):
         self.browser.get('http://localhost:8000')  # (3)
@@ -38,8 +37,8 @@ class NewVisitorTest(unittest.TestCase):  # (1)
         time.sleep(1)
 
         self.check_for_row_in_list_table('1: Buy peacock feathers')
-        self.check_for_row_in_list_table('2: Use peacock feathers to make a fly')
-
+        self.check_for_row_in_list_table(
+            '2: Use peacock feathers to make a fly')
 
         self.fail('Finish the test!')  # (5)
 
