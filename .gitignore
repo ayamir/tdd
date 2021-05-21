@@ -4,3 +4,4 @@ tddapp/__pycache__
 tddapp/migrations/__pycache__
 .vim/
 functional_tests/__pycache__
+.idea/
