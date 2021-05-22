@@ -1,5 +1,5 @@
 from django.test import LiveServerTestCase
-from msedge.selenium_tools import EdgeOptions, Edge
+from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import WebDriverException
 import time
@@ -9,13 +9,7 @@ MAX_TIME = 10
 
 class NewVisitorTest(LiveServerTestCase):
     def setUp(self):
-        options = EdgeOptions()
-        options.use_chromium = True
-        options.binary_location = r'/usr/bin/microsoft-edge-dev'
-        options.set_capability("platform", "LINUX")  # (2)
-
-        webdriver_path = r'/home/ayamir/.local/bin/msedgedriver'
-        self.browser = Edge(options=options, executable_path=webdriver_path)
+        self.browser = webdriver.Chrome()
 
     def tearDown(self):
         self.browser.quit()
@@ -50,13 +44,7 @@ class NewVisitorTest(LiveServerTestCase):
         # of Edith's is coming through from cookies etc
         self.browser.quit()
 
-        options = EdgeOptions()
-        options.use_chromium = True
-        options.binary_location = r'/usr/bin/microsoft-edge-dev'
-        options.set_capability("platform", "LINUX")  # (2)
-
-        webdriver_path = r'/home/ayamir/.local/bin/msedgedriver'
-        self.browser = Edge(options=options, executable_path=webdriver_path)
+        self.browser = webdriver.Chrome()
 
         self.browser.get(self.live_server_url)
         page_text = self.browser.find_element_by_tag_name('body').text
