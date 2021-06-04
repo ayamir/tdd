@@ -4,10 +4,29 @@ from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import WebDriverException
 import time
 
-MAX_TIME = 10
+MAX_TIME = 3
 
 
 class NewVisitorTest(StaticLiveServerTestCase):
+    def test_layout_and_styling(self):
+        self.browser.get(self.live_server_url)
+        self.browser.set_window_size(1024, 768)
+
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        self.assertAlmostEqual(inputbox.location['x'] +
+                               inputbox.size['width'] / 2,
+                               512,
+                               delta=10)
+
+        inputbox.send_keys('testing')
+        inputbox.send_keys(Keys.ENTER)
+        self.wait_for_row_in_list_table('1: testing')
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        self.assertAlmostEqual(inputbox.location['x'] +
+                               inputbox.size['width'] / 2,
+                               512,
+                               delta=10)
+
     def setUp(self):
         self.browser = webdriver.Chrome()
 
@@ -27,45 +46,46 @@ class NewVisitorTest(StaticLiveServerTestCase):
                     raise e
                 time.sleep(0.5)
 
-    def test_multiple_users_can_start_lists_at_different_urls(self):
-        self.browser.get(self.live_server_url)
-        inputbox = self.browser.find_element_by_id('id_new_item')
-        inputbox.send_keys('Buy peacock feathers')
-        inputbox.send_keys(Keys.ENTER)
-        self.wait_for_row_in_list_table('1: Buy peacock feathers')
 
-        # She notices that her list has a unique URL
-        edith_list_url = self.browser.current_url
-        self.assertRegex(edith_list_url, '/lists/.+')
+#     def test_multiple_users_can_start_lists_at_different_urls(self):
+#         self.browser.get(self.live_server_url)
+#         inputbox = self.browser.find_element_by_id('id_new_item')
+#         inputbox.send_keys('Buy peacock feathers')
+#         inputbox.send_keys(Keys.ENTER)
+#         self.wait_for_row_in_list_table('1: Buy peacock feathers')
 
-        # Now a new user, Francis, comes along to the site.
+#         # She notices that her list has a unique URL
+#         edith_list_url = self.browser.current_url
+#         self.assertRegex(edith_list_url, '/lists/.+')
 
-        # We use a new browser session to make sure that no information
-        # of Edith's is coming through from cookies etc
-        self.browser.quit()
+#         # Now a new user, Francis, comes along to the site.
 
-        self.browser = webdriver.Chrome()
+#         # We use a new browser session to make sure that no information
+#         # of Edith's is coming through from cookies etc
+#         self.browser.quit()
 
-        self.browser.get(self.live_server_url)
-        page_text = self.browser.find_element_by_tag_name('body').text
-        self.assertNotIn('Buy peacock feathers', page_text)
-        self.assertNotIn('make a fly', page_text)
+#         self.browser = webdriver.Chrome()
 
-        # Francis starts a new list by entering a new item.
-        # He is less interesting than Edith...
-        inputbox = self.browser.find_element_by_id('id_new_item')
-        inputbox.send_keys('Buy milk')
-        inputbox.send_keys(Keys.ENTER)
-        self.wait_for_row_in_list_table('1: Buy milk')
+#         self.browser.get(self.live_server_url)
+#         page_text = self.browser.find_element_by_tag_name('body').text
+#         self.assertNotIn('Buy peacock feathers', page_text)
+#         self.assertNotIn('make a fly', page_text)
 
-        # Francis gets his own unique URL
-        francis_list_url = self.browser.current_url
-        self.assertRegex(francis_list_url, '/lists/.+')
-        self.assertNotEqual(francis_list_url, edith_list_url)
+#         # Francis starts a new list by entering a new item.
+#         # He is less interesting than Edith...
+#         inputbox = self.browser.find_element_by_id('id_new_item')
+#         inputbox.send_keys('Buy milk')
+#         inputbox.send_keys(Keys.ENTER)
+#         self.wait_for_row_in_list_table('1: Buy milk')
 
-        # Again, there is no trace of Edith's list
-        page_text = self.browser.find_element_by_tag_name('body').text
-        self.assertNotIn('Buy peacock feathers', page_text)
-        self.assertIn('Buy milk', page_text)
+#         # Francis gets his own unique URL
+#         francis_list_url = self.browser.current_url
+#         self.assertRegex(francis_list_url, '/lists/.+')
+#         self.assertNotEqual(francis_list_url, edith_list_url)
 
-        # Satisfied, they both go back to sleep
+#         # Again, there is no trace of Edith's list
+#         page_text = self.browser.find_element_by_tag_name('body').text
+#         self.assertNotIn('Buy peacock feathers', page_text)
+#         self.assertIn('Buy milk', page_text)
+
+#         # Satisfied, they both go back to sleep
